@@ -67,36 +67,6 @@ class CoordinateService:
                 coordinates=coordinates
             )
 
-    def get_coordinate_by_grid(self, nx: int, ny: int) -> Optional[Coordinate]:
-        """
-        격자 좌표로 조회
-
-        Args:
-            nx: X 좌표
-            ny: Y 좌표
-
-        Returns:
-            Coordinate: 좌표 정보 (없으면 None)
-        """
-        with get_db_connection() as conn:
-            cursor = conn.cursor()
-            cursor.execute(
-                "SELECT * FROM coordinates WHERE nx = ? AND ny = ?",
-                (nx, ny)
-            )
-            row = cursor.fetchone()
-
-            if row:
-                return Coordinate(
-                    id=row['id'],
-                    nx=row['nx'],
-                    ny=row['ny'],
-                    province=row['province'],
-                    city=row['city'],
-                    town=row['town']
-                )
-            return None
-
 
 # 싱글톤 인스턴스
 coordinate_service = CoordinateService()
