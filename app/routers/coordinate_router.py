@@ -66,3 +66,40 @@ async def get_coordinates_by_region(
         raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@router.get(
+    "/by-coords",
+    response_model=CoordinateListResponse,
+    summary="좌표로 지역명 조회",
+    description="격자 좌표(nx, ny)로 지역명을 조회합니다."
+)
+async def get_region_by_coordinates(
+    nx: int = Query(..., description="X 격자 좌표 (예: 53)"),
+    ny: int = Query(..., description="Y 격자 좌표 (예: 66)")
+):
+    """
+    좌표로 지역명 조회
+
+    **사용 예시:**
+    - `/coordinates/by-coords?nx=53&ny=66`
+
+    **참고:**
+    - `nx`, `ny`는 필수 값입니다.
+    - `nx`, `ny`에 해당하는 지역이 없는 경우 404 에러를 반환합니다.
+    """
+    try:
+        result = coordinate_service.get_region_by_coordinates(nx=nx, ny=ny)
+
+        if result.total_count == 0:
+            raise HTTPException(
+                status_code=404,
+                detail="조회된 지역이 없습니다. 좌표를 확인해주세요."
+            )
+
+        return result
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

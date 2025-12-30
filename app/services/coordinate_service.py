@@ -67,6 +67,42 @@ class CoordinateService:
                 coordinates=coordinates
             )
 
+    def get_region_by_coordinates(self, nx: int, ny: int) -> CoordinateListResponse:
+        """
+        nx, ny로 지역명 조회
+
+        Args:
+            nx: x좌표
+            ny: y좌표
+
+        Returns:
+            CoordinateListResponse: 조회된 좌표 목록
+        """
+        with get_db_connection() as conn:
+            cursor = conn.cursor()
+            query = "SELECT * FROM coordinates WHERE nx = ? AND ny = ?"
+            params = [nx, ny]
+
+            cursor.execute(query, params)
+            rows = cursor.fetchall()
+
+            # 결과를 Coordinate 모델로 변환
+            coordinates = []
+            for row in rows:
+                coordinates.append(Coordinate(
+                    id=row['id'],
+                    nx=row['nx'],
+                    ny=row['ny'],
+                    province=row['province'],
+                    city=row['city'],
+                    town=row['town']
+                ))
+
+            return CoordinateListResponse(
+                total_count=len(coordinates),
+                coordinates=coordinates
+            )
+
 
 # 싱글톤 인스턴스
 coordinate_service = CoordinateService()
