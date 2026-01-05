@@ -98,3 +98,4 @@ cython_debug/
 claude.md
 .claude/
 GEMINI.md
+test_main.http
